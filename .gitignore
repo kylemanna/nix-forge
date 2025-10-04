@@ -1,0 +1,19 @@
+# Nix build artifacts
+result
+result-*
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+
+# Logs
+*.log
+
+# Tarballs
+*.tgz
+*.tar.*
+
+# dotenv environment variables file
+.env
+.env.test
