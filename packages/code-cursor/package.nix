@@ -1,5 +1,6 @@
 # Upstream: https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/co/code-cursor/package.nix
-# Downloads listed here: https://github.com/oslook/cursor-ai-downloads
+# Query API for latest version:
+# $ curl -s https://api2.cursor.sh/updates/api/download/stable/linux-x64/cursor | jq -r .downloadUrl
 {
   lib,
   stdenv,
@@ -18,8 +19,8 @@ let
 
   sources = {
     x86_64-linux = fetchurl {
-      url = "https://downloads.cursor.com/production/adb0f9e3e4f184bba7f3fa6dbfd72ad0ebb8cfd8/linux/x64/Cursor-1.7.28-x86_64.AppImage";
-      hash = "sha256-ZB/xGGKyVnfmNASWtfkmoxvzzkXa2pUlmgY2Bb9f5lU=";
+      url = "https://downloads.cursor.com/production/a84f941711ad680a635c8a3456002833186c484f/linux/x64/Cursor-1.7.33-x86_64.AppImage";
+      hash = "sha256-bXT/NVqcyR+RrqZdd0TbtcsyLjGb8Wv5S5On9JLElG4=";
     };
   };
 
@@ -29,7 +30,7 @@ in
   inherit useVSCodeRipgrep;
   commandLineArgs = finalCommandLineArgs;
 
-  version = "1.7.28";
+  version = "1.7.33";
   pname = "cursor";
 
   # You can find the current VSCode version in the About dialog:
