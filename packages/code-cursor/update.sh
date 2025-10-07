@@ -69,12 +69,7 @@ NEW_HASH_SRI=$(nix hash convert --hash-algo sha256 --to sri "$NEW_HASH_BASE32")
 
 echo -e "${GREEN}✅ New hash: $NEW_HASH_SRI${NC}"
 
-# Step 4: Create backup of original file
-BACKUP_FILE="$PACKAGE_FILE.backup.$(date +%Y%m%d_%H%M%S)"
-cp "$PACKAGE_FILE" "$BACKUP_FILE"
-echo -e "${BLUE}💾 Created backup: $BACKUP_FILE${NC}"
-
-# Step 5: Update package.nix
+# Step 4: Update package.nix
 echo -e "${YELLOW}📝 Updating package.nix...${NC}"
 
 # Update URL
@@ -91,12 +86,12 @@ echo -e "${GREEN}✅ Updated package.nix with new version and hash${NC}"
 # Step 6: Test build
 echo -e "${YELLOW}🔨 Testing build...${NC}"
 echo -e "${BLUE}   This may take a few minutes...${NC}"
-if timeout 600 bash -c 'NIXPKGS_ALLOW_UNFREE=1 nix-build -E "with import <nixpkgs> { overlays = [ (import '"$SCRIPT_DIR"'/../../overlays/code-cursor.nix) ]; }; code-cursor" 2>&1' > /tmp/cursor_build_output.log 2>&1; then
+if timeout 600 bash -c 'NIXPKGS_ALLOW_UNFREE=1 nix build .#code-cursor --impure' > /tmp/cursor_build_output.log 2>&1; then
     BUILD_OUTPUT=$(cat /tmp/cursor_build_output.log)
     echo -e "${GREEN}✅ Build successful!${NC}"
     BUILD_PATH=$(echo "$BUILD_OUTPUT" | tail -n1)
     echo -e "${GREEN}📦 Built package: $BUILD_PATH${NC}"
-    
+
     # Test the binary
     echo -e "${YELLOW}🧪 Testing binary...${NC}"
     if VERSION_OUTPUT=$("$BUILD_PATH/bin/cursor" --version 2>/dev/null | head -n1); then
@@ -108,8 +103,6 @@ else
     echo -e "${RED}❌ Build failed!${NC}"
     BUILD_OUTPUT=$(cat /tmp/cursor_build_output.log)
     echo "$BUILD_OUTPUT"
-    echo -e "${YELLOW}🔄 Restoring backup...${NC}"
-    mv "$BACKUP_FILE" "$PACKAGE_FILE"
     rm -f /tmp/cursor_build_output.log
     exit 1
 fi
@@ -127,5 +120,3 @@ echo -e "  • Build: ✅ Successful"
 echo -e "  • Binary: ✅ Working"
 echo ""
 print_quick_commands
-echo ""
-echo -e "${BLUE}📁 Backup file saved as: $BACKUP_FILE${NC}"
