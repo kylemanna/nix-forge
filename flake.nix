@@ -23,6 +23,11 @@
       # Default overlay (aggregates all individual overlays)
       overlays.default = aggregateOverlays;
 
+      # NixOS modules
+      nixosModules = {
+        intel-lpmd = import ./modules/intel-lpmd.nix;
+      };
+
       # Expose packages for each system
       packages = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (
         system:
@@ -32,6 +37,7 @@
         in
         {
           code-cursor = overlayedPkgs.code-cursor;
+          intel-lpmd = overlayedPkgs.intel-lpmd;
         }
       );
     };
