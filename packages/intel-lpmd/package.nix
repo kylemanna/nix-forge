@@ -44,6 +44,11 @@ stdenv.mkDerivation rec {
     "--with-systemdsystemunitdir=${placeholder "out"}/lib/systemd/system"
   ];
 
+  postInstall = ''
+    install -Dm644 ${./intel_lpmd_config_F6_M186.xml} \
+      $out/etc/intel_lpmd/intel_lpmd_config_F6_M186.xml
+  '';
+
   postPatch = ''
         substituteInPlace data/intel_lpmd.service.in \
           --replace "PrivateTmp=yes" "PrivateTmp=yes

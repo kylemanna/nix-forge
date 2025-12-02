@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+
+<!--
+Specifies the configuration data
+for Intel Energy Optimizer (LPMD) daemon
+Intel Core i7-1340P (Family 6, Model 186): 4P + 8E.
+-->
+
+<Configuration>
+	<!--
+		Mode values
+		0: Cgroup v2
+		1: Cgroup v2 isolate
+		2: CPU idle injection
+	-->
+	<Mode>1</Mode>
+
+	<PerformanceDef>-1</PerformanceDef>
+	<BalancedDef>0</BalancedDef>
+	<PowersaverDef>1</PowersaverDef>
+
+	<!-- Enable all telemetry knobs for best matching -->
+	<HfiLpmEnable>1</HfiLpmEnable>
+	<HfiSuvEnable>1</HfiSuvEnable>
+
+	<util_entry_threshold>10</util_entry_threshold>
+	<util_exit_threshold>90</util_exit_threshold>
+
+	<EntryDelayMS>1000</EntryDelayMS>
+	<ExitDelayMS>500</ExitDelayMS>
+	<EntryHystMS>3000</EntryHystMS>
+	<ExitHystMS>2000</ExitHystMS>
+
+	<IgnoreITMT>0</IgnoreITMT>
+
+	<!--
+		Primary SKU: 4P (HT) + 8E, 28W nominal Core i5-1340P (Raptor Lake-P).
+	-->
+	<States>
+		<CPUFamily> 6 </CPUFamily>
+		<CPUModel> 186 </CPUModel>
+		<CPUConfig> 8P8E0L-28W </CPUConfig>
+		<State>
+			<ID> 1 </ID>
+			<Name> LP_IDLE </Name>
+			<EntrySystemLoadThres> 15 </EntrySystemLoadThres>
+			<EnterCPULoadThres> 25 </EnterCPULoadThres>
+			<ActiveCPUs>12-15</ActiveCPUs>
+			<EPP> 255 </EPP>
+			<EPB> 15 </EPB>
+			<MinPollInterval>2000</MinPollInterval>
+			<PollIntervalIncrement>500</PollIntervalIncrement>
+			<MaxPollInterval>5000</MaxPollInterval>
+			<ITMTState> -1 </ITMTState>
+			<IRQMigrate> 1 </IRQMigrate>
+		</State>
+		<State>
+			<ID> 2 </ID>
+			<Name> LP_LIGHT </Name>
+			<EntrySystemLoadThres> 35 </EntrySystemLoadThres>
+			<EnterCPULoadThres> 50 </EnterCPULoadThres>
+			<ActiveCPUs>8-15</ActiveCPUs>
+			<EPP> 224 </EPP>
+			<EPB> 12 </EPB>
+			<MinPollInterval>2000</MinPollInterval>
+			<ITMTState> -1 </ITMTState>
+			<IRQMigrate> 1 </IRQMigrate>
+		</State>
+		<State>
+			<ID> 3 </ID>
+			<Name> LP_SUSTAINED </Name>
+			<EntrySystemLoadThres> 60 </EntrySystemLoadThres>
+			<EnterCPULoadThres> 70 </EnterCPULoadThres>
+			<ActiveCPUs>0-15</ActiveCPUs>
+			<EPP> 144 </EPP>
+			<EPB> 8 </EPB>
+			<MinPollInterval>1500</MinPollInterval>
+			<ITMTState> 0 </ITMTState>
+			<IRQMigrate> 1 </IRQMigrate>
+		</State>
+		<State>
+			<ID> 4 </ID>
+			<Name> LP_BURSTY </Name>
+			<EntrySystemLoadThres> 75 </EntrySystemLoadThres>
+			<EnterCPULoadThres> 85 </EnterCPULoadThres>
+			<ActiveCPUs>0-15</ActiveCPUs>
+			<EPP> 96 </EPP>
+			<EPB> 6 </EPB>
+			<MinPollInterval>1000</MinPollInterval>
+			<ITMTState> 1 </ITMTState>
+			<IRQMigrate> 1 </IRQMigrate>
+		</State>
+	</States>
+
+</Configuration>
