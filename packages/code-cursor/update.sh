@@ -13,6 +13,22 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGE_FILE="$SCRIPT_DIR/package.nix"
 
+# Parse arguments
+PUSH_MODE=false
+for arg in "$@"; do
+    case $arg in
+        --push)
+            PUSH_MODE=true
+            shift
+            ;;
+        *)
+            echo -e "${RED}❌ Unknown argument: $arg${NC}"
+            echo -e "${YELLOW}Usage: $0 [--push]${NC}"
+            exit 1
+            ;;
+    esac
+done
+
 # Function to print quick commands
 print_quick_commands() {
     echo ""
@@ -21,7 +37,11 @@ print_quick_commands() {
     echo -e "${YELLOW}  NIXPKGS_ALLOW_UNFREE=1 nix run .#code-cursor --impure${NC}"
 }
 
-echo -e "${BLUE}🔄 Updating Cursor package...${NC}"
+if [ "$PUSH_MODE" = true ]; then
+    echo -e "${BLUE}🔄 Updating Cursor package (with commit & push)...${NC}"
+else
+    echo -e "${BLUE}🔄 Updating Cursor package (dry run - use --push to commit)...${NC}"
+fi
 
 # Step 1: Get the new URL from the API
 echo -e "${YELLOW}📡 Fetching latest version information from API...${NC}"
@@ -110,7 +130,44 @@ fi
 # Cleanup
 rm -f /tmp/cursor_build_output.log
 
-# Step 7: Success message
+# Step 7: Commit and push changes (only if --push flag is used)
+if [ "$PUSH_MODE" = true ]; then
+    echo -e "${BLUE}📝 Committing changes...${NC}"
+    echo -e "${YELLOW}⚠️  This will commit and push the changes in 3 seconds...${NC}"
+    echo -e "${YELLOW}   Press Ctrl+C to cancel${NC}"
+
+    # 3-second countdown
+    for i in {3..1}; do
+        echo -e "${YELLOW}   $i...${NC}"
+        sleep 1
+    done
+
+    COMMIT_MESSAGE="code-cursor: Update to version $NEW_VERSION"
+
+    # Add the file
+    git add "$PACKAGE_FILE"
+
+    # Create commit with proper format
+    git commit -m "$COMMIT_MESSAGE" \
+               -m "" \
+               -m "- Updated version from $CURRENT_VERSION to $NEW_VERSION" \
+               -m "- Updated URL and hash accordingly" || {
+        echo -e "${YELLOW}⚠️  No changes to commit (already up to date)${NC}"
+    }
+
+    # Push to remote
+    echo -e "${BLUE}🚀 Pushing to remote...${NC}"
+    git push origin main || {
+        echo -e "${RED}❌ Failed to push to remote${NC}"
+        exit 1
+    }
+
+    echo -e "${GREEN}✅ Changes committed and pushed${NC}"
+else
+    echo -e "${YELLOW}ℹ️  Skipping commit & push (use --push to enable)${NC}"
+fi
+
+# Step 8: Success message
 echo ""
 echo -e "${GREEN}🎉 Update completed successfully!${NC}"
 echo -e "${GREEN}📊 Summary:${NC}"
@@ -118,5 +175,10 @@ echo -e "  • Version: $CURRENT_VERSION → $NEW_VERSION"
 echo -e "  • Hash: $NEW_HASH_SRI"
 echo -e "  • Build: ✅ Successful"
 echo -e "  • Binary: ✅ Working"
+if [ "$PUSH_MODE" = true ]; then
+    echo -e "  • Git: ✅ Committed and pushed"
+else
+    echo -e "  • Git: ⏭️  Skipped (use --push to enable)"
+fi
 echo ""
 print_quick_commands
