@@ -4,7 +4,6 @@
 {
   lib,
   stdenv,
-  callPackage,
   vscode-generic,
   fetchurl,
   appimageTools,
@@ -26,7 +25,7 @@ let
 
   source = sources.${hostPlatform.system};
 in
-(callPackage vscode-generic rec {
+(vscode-generic rec {
   inherit useVSCodeRipgrep;
   commandLineArgs = finalCommandLineArgs;
 
