@@ -2,6 +2,7 @@
 [
   ./overlays/code-cursor.nix
   ./overlays/intel-lpmd.nix
+  ./overlays/aoostar-rs.nix
   # Add more overlays here as needed
   # ./overlays/your-package.nix
 ]

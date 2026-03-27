@@ -38,6 +38,7 @@
         {
           code-cursor = overlayedPkgs.code-cursor;
           intel-lpmd = overlayedPkgs.intel-lpmd;
+          aoostar-rs = overlayedPkgs.aoostar-rs;
         }
       );
     };
