@@ -39,6 +39,7 @@
           code-cursor = overlayedPkgs.code-cursor;
           intel-lpmd = overlayedPkgs.intel-lpmd;
           aoostar-rs = overlayedPkgs.aoostar-rs;
+          "116xfwdl" = overlayedPkgs."116xfwdl";
         }
       );
     };
