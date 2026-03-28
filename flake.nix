@@ -9,19 +9,10 @@
     { self, nixpkgs }:
     let
       inherit (nixpkgs) lib;
-
-      # Aggregate all individual overlays
-      aggregateOverlays =
-        final: prev:
-        with prev.lib;
-        let
-          overlayList = map import (import ./overlays.nix);
-        in
-        foldl' (flip extends) (_: prev) overlayList final;
     in
     {
-      # Default overlay (aggregates all individual overlays)
-      overlays.default = aggregateOverlays;
+      # Default overlay
+      overlays.default = import ./overlays.nix;
 
       # NixOS modules
       nixosModules = {
@@ -29,18 +20,18 @@
       };
 
       # Expose packages for each system
-      packages = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (
+      packages = lib.genAttrs lib.systems.flakeExposed (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
-          overlayedPkgs = pkgs.extend aggregateOverlays;
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ self.overlays.default ];
+          };
+          # Get the package names from the overlay to expose them in 'packages'
+          # We call the overlay with empty sets just to get the keys
+          overlayKeys = builtins.attrNames (self.overlays.default pkgs pkgs);
         in
-        {
-          code-cursor = overlayedPkgs.code-cursor;
-          intel-lpmd = overlayedPkgs.intel-lpmd;
-          aoostar-rs = overlayedPkgs.aoostar-rs;
-          "116xfwdl" = overlayedPkgs."116xfwdl";
-        }
+        lib.genAttrs overlayKeys (name: pkgs.${name})
       );
     };
 }
