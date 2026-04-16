@@ -8,4 +8,6 @@ final: prev: {
   };
 
   intel-lpmd = final.callPackage ./packages/intel-lpmd/package.nix { };
+
+  ssd-flash-id = final.callPackage ./packages/ssd-flash-id/package.nix { };
 }
